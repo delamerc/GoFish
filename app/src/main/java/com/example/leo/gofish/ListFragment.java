@@ -2,6 +2,7 @@ package com.example.leo.gofish;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,7 +30,12 @@ public class ListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_fragment, container, false);
+        return inflater.inflate(R.layout.list_fragment, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         ListView lv = (ListView) view.findViewById(R.id.station_list);
         init();
         ArrayAdapter<Station> adapter = new ArrayAdapter<Station>(getActivity(), R.layout.custom_list_textview, stations);
@@ -38,25 +44,24 @@ public class ListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Station s = stations.get(i);
-                DownloadFile df = new DownloadFile(getActivity());
-                if(!(df.getStatus() == AsyncTask.Status.RUNNING)) {
-                    df.execute(s);
-                    DetailFragment frag = new DetailFragment();
-                    df.delegate = frag;
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("Station", s);
-                    frag.setArguments(bundle);
+                //DownloadFile df = new DownloadFile(getActivity());
+                //if(!(df.getStatus() == AsyncTask.Status.RUNNING)) {
+                //   df.execute(s);
+                Fragment frag = new DetailFragment();
+                //   df.delegate = frag;
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("Station", s);
+                frag.setArguments(bundle);
 
-                    Fragment fr = frag;
-                    FragmentManager fm = getFragmentManager();
-                    FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.fragment_container, fr);
-                    ft.addToBackStack(fr.getClass().getName());
-                    ft.commit();
-                }
+                Fragment fr = frag;
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.fragment_container, fr);
+                //ft.addToBackStack(fr.getClass().getName());
+                ft.commit();
+                // }
             }
         });
-        return view;
     }
 
     public void init() {
@@ -65,4 +70,12 @@ public class ListFragment extends Fragment {
         stations = csv.read();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.station_list);
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.remove(fragment);
+        ft.commit();
+    }
 }

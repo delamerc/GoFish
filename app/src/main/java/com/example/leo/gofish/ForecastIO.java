@@ -29,7 +29,7 @@ public class ForecastIO extends AsyncTask<Location, Void, Weather> {
 
         String jsonStr = http.makeServiceCall(reqUrl);
 
-        Log.i(TAG, "URL Response: " + jsonStr);
+        //Log.i(TAG, "URL Response: " + jsonStr);
 
         if (jsonStr != null) {
             try {
