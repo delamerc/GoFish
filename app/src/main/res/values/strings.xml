@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">GoFish</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_fav">Favourites</string>
+    <string name="menu_top">Top Stations</string>
+
+    <!--weather fragment -->
+    <string name="lbltemp">Temperature:</string>
+    <string name="lblFeel">Feels like:</string>
+    <string name="lblPressure">Pressure:</string>
+    <string name="lblWind">Wind:</string>
+    <string name="lblLocation">Current Location:</string>
+
+    <string-array name="wind_directions">
+        <item name="N">N</item>
+        <item name="NE">NE</item>
+        <item name="E">E</item>
+        <item name="SE">SE</item>
+        <item name="S">S</item>
+        <item name="SW">SW</item>
+        <item name="W">W</item>
+        <item name="NW">NW</item>
+    </string-array>
+
+</resources>
