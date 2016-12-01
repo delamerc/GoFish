@@ -9,14 +9,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,10 +28,8 @@ import java.util.List;
  */
 
 public class ListFragment extends Fragment {
-    List<Station> stations = new ArrayList<Station>();
     private final String TAG = this.getClass().getName();
     ArrayList<Station> stations = new ArrayList<Station>();
-    ArrayList<Station> favStations = new ArrayList<Station>();
     CustomAdapter adapter = null;
 
     @Override
@@ -64,10 +60,6 @@ public class ListFragment extends Fragment {
             this.stationList.addAll(stations);
         }
 
-        public void setList(ArrayList<Station> favs) {
-            this.stationList = favs;
-        }
-
         private class ViewHolder {
             TextView name;
             CheckBox isFavourite;
@@ -92,13 +84,30 @@ public class ListFragment extends Fragment {
                         Station station = (Station) cb.getTag();
                         if(cb.isChecked()) {
                             station.setFavourite(true);
-                            addToFavourites(station);
-                            favStations.add(station);
+                            AsyncTask<Station, Object, Object> addFavouriteTask = new AsyncTask<Station, Object, Object>() {
+
+                                @Override
+                                protected Object doInBackground(Station... objects) {
+                                    Station s = objects[0];
+                                    addToFavourites(s);
+                                    return null;
+                                }
+                            };
+
+                            addFavouriteTask.execute(station);
                         }
                         else {
                             station.setFavourite(false);
-                            removeFromFavourites(station);
-                            favStations.remove(station);
+                            AsyncTask<Station, Object, Object> removeFavouriteTask = new AsyncTask<Station, Object, Object>() {
+
+                                @Override
+                                protected Object doInBackground(Station... objects) {
+                                    Station s = objects[0];
+                                    removeFromFavourites(s);
+                                    return null;
+                                }
+                            };
+                            removeFavouriteTask.execute(station);
                         }
                     }
                 });
@@ -124,7 +133,6 @@ public class ListFragment extends Fragment {
         for(Station s : stations) {
             Log.i("INFO", s.getId() + " station exists:" + databaseConnector.checkIfExists(s.getId()));
             if(databaseConnector.checkIfExists(s.getId())) {
-                favStations.add(s);
                 s.setFavourite(true);
             }
         }

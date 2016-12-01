@@ -16,7 +16,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/lblTitle"
-        android:text="Mississauga, ON"/>
+        android:textStyle="bold"
+        android:text=" Mississauga, ON"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -60,31 +61,36 @@
             android:id="@+id/summary"
             android:layout_width="wrap_content"
             android:layout_below="@+id/icon"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textStyle="bold"/>
         <TextView
             android:id="@+id/apparentTemperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/lblFeel"
-            android:layout_toRightOf="@+id/lblFeel"/>
+            android:layout_toRightOf="@+id/lblFeel"
+            android:textStyle="bold"/>
         <TextView
             android:id="@+id/temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/icon"
-            android:textSize="@dimen/temp_text"/>
+            android:textSize="@dimen/temp_text"
+            android:textStyle="bold"/>
         <TextView
             android:id="@+id/windSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/lblWindSpeed"
-            android:layout_alignBaseline="@+id/lblWindSpeed"/>
+            android:layout_alignBaseline="@+id/lblWindSpeed"
+            android:textStyle="bold"/>
         <TextView
             android:id="@+id/pressure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/lblPressure"
-            android:layout_alignBaseline="@+id/lblPressure"/>
+            android:layout_alignBaseline="@+id/lblPressure"
+            android:textStyle="bold"/>
     </RelativeLayout>
 
 

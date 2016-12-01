@@ -59,9 +59,9 @@ public class WeatherFragment extends Fragment {
         summary.setText(weather.getSummary());
         setImage(weather.getIcon());
         temp.setText(weather.temperatureToString());
-        feel.setText(weather.apparentTempToString());
-        wind.setText(weather.windToString());
-        pressure.setText(weather.pressureToString());
+        feel.setText(" " + weather.apparentTempToString());
+        wind.setText(" " + weather.windToString());
+        pressure.setText(" " + weather.pressureToString());
     }
 
     private void setImage(String img) {

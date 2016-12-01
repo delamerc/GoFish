@@ -9,7 +9,6 @@
     <string name="menu_top">Top Stations</string>
 
     <!--weather fragment -->
-    <string name="lbltemp">Temperature:</string>
     <string name="lblFeel">Feels like:</string>
     <string name="lblPressure">Pressure:</string>
     <string name="lblWind">Wind:</string>
@@ -25,5 +24,16 @@
         <item name="W">W</item>
         <item name="NW">NW</item>
     </string-array>
+
+    <!--detail fragment -->
+    <string name="lblId">Station Id: </string>
+    <string name="lblName">Station Name: </string>
+    <string name="lblLong">Longitude: </string>
+    <string name="lblLat">Latitude: </string>
+    <string name="lblProv">Province: </string>
+    <string name="lblWat">Water Level: </string>
+    <string name="lblDis">Discharge: </string>
+
+
 
 </resources>

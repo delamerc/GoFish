@@ -28,7 +28,7 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
     private TextView mStationProvince;
     private TextView mStationLong;
     private TextView mStationLat;
-    private TextView mStationgWaterLevel;
+    private TextView mStationWaterLevel;
     private TextView mStationDischarge;
 
     @Override
@@ -64,13 +64,13 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
     @Override
     public void onTaskComplete(Station s) {
         init();
-        mStationId.setText("Station Id: " + station.getId());
-        mStationName.setText("Station Name: " + station.getName());
-        mStationProvince.setText("Province: " + station.getProvince());
-        mStationLat.setText("Latitude: " + Double.toString(station.getLatitude()));
-        mStationLong.setText("Longitude: " + Double.toString(station.getLongitude()));
-        mStationgWaterLevel.setText("Water Level: " + Double.toString(station.getWaterLevel()));
-        mStationDischarge.setText("Discharge: " + Double.toString(station.getDischarge()));
+        mStationId.setText(" " + station.getId());
+        mStationName.setText(" " + station.getName());
+        mStationProvince.setText(" " + station.getProvince());
+        mStationLat.setText(" " + Double.toString(station.getLatitude()));
+        mStationLong.setText(" " + Double.toString(station.getLongitude()));
+        mStationWaterLevel.setText(" " + Double.toString(station.getWaterLevel()));
+        mStationDischarge.setText(" " + Double.toString(station.getDischarge()));
     }
 
     public void init() {
@@ -97,7 +97,7 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
         mStationProvince = (TextView) getView().findViewById(R.id.station_province);
         mStationLat = (TextView) getView().findViewById(R.id.station_lat);
         mStationLong = (TextView) getView().findViewById(R.id.station_long);
-        mStationgWaterLevel = (TextView) getView().findViewById(R.id.station_waterlevel);
+        mStationWaterLevel = (TextView) getView().findViewById(R.id.station_waterLevel);
         mStationDischarge = (TextView) getView().findViewById(R.id.station_discharge);
     }
 
