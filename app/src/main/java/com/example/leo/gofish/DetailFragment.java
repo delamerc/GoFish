@@ -2,6 +2,7 @@ package com.example.leo.gofish;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -54,29 +55,20 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initView();
+    }
+
+    @Override
     public void onTaskComplete(Station s) {
-        //station.setFileName(s.getFileName());
         init();
-
-        mStationId = (TextView) getView().findViewById(R.id.station_id);
         mStationId.setText("Station Id: " + station.getId());
-
-        mStationName = (TextView) getView().findViewById(R.id.station_name);
         mStationName.setText("Station Name: " + station.getName());
-
-        mStationProvince = (TextView) getView().findViewById(R.id.station_province);
         mStationProvince.setText("Province: " + station.getProvince());
-
-        mStationLat = (TextView) getView().findViewById(R.id.station_lat);
         mStationLat.setText("Latitude: " + Double.toString(station.getLatitude()));
-
-        mStationLong = (TextView) getView().findViewById(R.id.station_long);
         mStationLong.setText("Longitude: " + Double.toString(station.getLongitude()));
-
-        mStationgWaterLevel = (TextView) getView().findViewById(R.id.station_waterlevel);
         mStationgWaterLevel.setText("Water Level: " + Double.toString(station.getWaterLevel()));
-
-        mStationDischarge = (TextView) getView().findViewById(R.id.station_discharge);
         mStationDischarge.setText("Discharge: " + Double.toString(station.getDischarge()));
     }
 
@@ -88,5 +80,15 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
         } catch (IOException e) {
             Log.i("Detail Fragment: ", "File not found");
         }
+    }
+
+    public void initView() {
+        mStationId = (TextView) getView().findViewById(R.id.station_id);
+        mStationName = (TextView) getView().findViewById(R.id.station_name);
+        mStationProvince = (TextView) getView().findViewById(R.id.station_province);
+        mStationLat = (TextView) getView().findViewById(R.id.station_lat);
+        mStationLong = (TextView) getView().findViewById(R.id.station_long);
+        mStationgWaterLevel = (TextView) getView().findViewById(R.id.station_waterlevel);
+        mStationDischarge = (TextView) getView().findViewById(R.id.station_discharge);
     }
 }

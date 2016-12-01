@@ -2,6 +2,7 @@ package com.example.leo.gofish;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,16 +39,9 @@ public class WeatherFragment extends Fragment implements AsyncWeatherResponse {
         return view;
     }
 
-
-    Location createNewLocation(double longitude, double latitude) {
-        Location location = new Location("dummyprovider");
-        location.setLongitude(longitude);
-        location.setLatitude(latitude);
-        return location;
-    }
-
     @Override
-    public void onTaskComplete(Weather weather) {
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         summary = (TextView)getView().findViewById(R.id.summary);
         //icon = (TextView)getView().findViewById(R.id.icon);
         //lat = (TextView)getView().findViewById(R.id.latitude);
@@ -58,6 +52,18 @@ public class WeatherFragment extends Fragment implements AsyncWeatherResponse {
         //windDir = (TextView)getView().findViewById(R.id.windBearing);
         pressure = (TextView)getView().findViewById(R.id.pressure);
 
+
+    }
+
+    Location createNewLocation(double longitude, double latitude) {
+        Location location = new Location("dummyprovider");
+        location.setLongitude(longitude);
+        location.setLatitude(latitude);
+        return location;
+    }
+
+    @Override
+    public void onTaskComplete(Weather weather) {
         summary.setText(weather.getSummary());
         // icon.setText(weather.getIcon());
         //lat.setText(Double.toString(weather.getLatitude()));

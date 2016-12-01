@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
 
 /**
  * Created by Karlo on 11/29/2016.
@@ -26,24 +29,38 @@ public class DatabaseConnector {
         if(database != null) database.close();
     }
 
-    public Cursor getAllStations() {
-        return database.query(TABLE_NAME, new String[] {"_id, stationid, name, province"}, null, null, null, null, "name");
+    public boolean checkIfExists(String stationId) {
+        String [] column = { "stationid" };
+        String selection = "stationid=?";
+        String [] args = { stationId };
+
+        Cursor cursor = database.query(TABLE_NAME, column, selection, args, null, null, null, null);
+        if(cursor.moveToFirst()) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public void insertStation(String id, String name, String province) {
-        ContentValues newStation = new ContentValues();
-        newStation.put("stationid", id);
-        newStation.put("name", name);
-        newStation.put("province", province);
+        ContentValues favStation = new ContentValues();
+        favStation.put("stationid", id);
+        favStation.put("name", name);
+        favStation.put("province", province);
 
         open();
-        database.insert(TABLE_NAME, null, newStation);
+        if(!checkIfExists(id)) {
+            Log.i("List Checked", "Adding " + id + " to database");
+            database.insert(TABLE_NAME, null, favStation);
+        }
         close();
     }
 
     public void deleteStation(String stationId) {
         open();
-        database.delete(TABLE_NAME, "stationid=" + stationId, null);
+        int id = database.delete(TABLE_NAME, "stationid=?", new String [] { stationId });
+        Log.i("Station deleted: ", "" + id);
         close();
     }
 
@@ -54,7 +71,7 @@ public class DatabaseConnector {
     private SQLiteDatabase database;
     static final String DATABASE_NAME = "stations_db";
     static final String TABLE_NAME = "favourite";
-    static final int DATABASE_VERSION = 1;
+    static final int DATABASE_VERSION = 4;
     static final String CREATE_DB_TABLE = "CREATE TABLE " + TABLE_NAME  + " (_id integer primary key autoincrement, stationid TEXT, name TEXT, province TEXT);";
     private static class DatabaseOpenHelper extends SQLiteOpenHelper
     {

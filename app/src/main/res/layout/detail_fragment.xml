@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,10 +10,11 @@
         class="com.example.leo.gofish.WeatherFragment"/>
 
     <LinearLayout
-        android:layout_below="@+id/weather_frag"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/weather_frag"
+        android:layout_alignParentStart="true">
 
         <TextView
             android:text="TextView"
@@ -52,5 +53,4 @@
             android:layout_height="wrap_content"
             android:id="@+id/station_discharge" />
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
