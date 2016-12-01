@@ -2,8 +2,12 @@ package com.example.leo.gofish;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -32,8 +36,13 @@ class DownloadFile extends AsyncTask<Station, Void, Station> {
     }
 
     @Override
-    protected void onPreExecute() {
+    protected void onPreExecute()
+    {
+        super.onPreExecute();
         Log.i(TAG, "Initiate download...");
+        mProgressDialog = new ProgressDialog(mContext);
+        mProgressDialog.setMessage("Loading...");
+        mProgressDialog.show();
     }
 
     @Override
@@ -56,6 +65,8 @@ class DownloadFile extends AsyncTask<Station, Void, Station> {
                     s.getProvince() + "_" +
                     s.getId() + "_hourly_hydrometric.csv"; // filename to be saved
             s.setFileName(fileName);
+            s.setWeather(getWeather(s.getLatitude(),s.getLongitude()));
+
             File file = new File(dir, fileName);
             if(!file.exists() && !file.isFile()) {
                // mProgressDialog = ProgressDialog.show(mContext, "Download", "Downloading station data...", true); // show download progress bar
@@ -89,7 +100,7 @@ class DownloadFile extends AsyncTask<Station, Void, Station> {
     protected void onPostExecute(Station s) {
         super.onPostExecute(s);
         delegate.onTaskComplete(s);
-        //mProgressDialog.dismiss();
+        mProgressDialog.dismiss();
         Log.i(TAG, "Download successful!");
     }
 
@@ -104,4 +115,44 @@ class DownloadFile extends AsyncTask<Station, Void, Station> {
 
         return "" + year + month + day + hour;
     }
+
+    private final String key = "e281e3e3f062b04bae195d56fb181e1a/";
+    private final String url = "https://api.forecast.io/forecast/";
+
+    private Weather getWeather(double lat, double lng){
+        Weather weather=null;
+        String reqUrl = url + key+lat+","+lng;
+
+        HTTPHandler http = new HTTPHandler();
+
+        String jsonStr = http.makeServiceCall(reqUrl);
+
+        if (jsonStr != null) {
+            try {
+                JSONObject weatherObj = new JSONObject(jsonStr);
+                JSONObject conditions = weatherObj.getJSONObject("currently");
+
+                weather = new Weather(
+                        weatherObj.getDouble("latitude"),
+                        weatherObj.getDouble("longitude"),
+                        conditions.getString("summary"),
+                        conditions.getString("icon"),
+                        conditions.getDouble("temperature"),
+                        conditions.getDouble("apparentTemperature"),
+                        conditions.getDouble("windSpeed"),
+                        conditions.getInt("windBearing"),
+                        conditions.getDouble("pressure")
+                );
+
+            } catch (final JSONException e) {
+                Log.e(TAG, "Json parsing error: " + e.getMessage());
+            }
+        } else {
+            Log.e(TAG, "Couldn't get json.");
+        }
+
+        return weather;
+
+    }
+
 }

@@ -22,7 +22,7 @@ import java.util.List;
 
 public class ListFragment extends Fragment {
     List<Station> stations = new ArrayList<Station>();
-
+    private final String TAG = this.getClass().getName();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,13 +53,20 @@ public class ListFragment extends Fragment {
                 bundle.putSerializable("Station", s);
                 frag.setArguments(bundle);
 
-                Fragment fr = frag;
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                fm.beginTransaction()
+                        .add(frag,TAG)
+                        .addToBackStack(fm.getClass().getName())
+                        .replace(R.id.fragment_container, frag)
+                        .commit();
+             /*   Fragment fr = frag;
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.fragment_container, fr);
                 //ft.addToBackStack(fr.getClass().getName());
                 ft.commit();
-                // }
+                // }*/
+
             }
         });
     }

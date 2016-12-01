@@ -1,5 +1,6 @@
 package com.example.leo.gofish;
 
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,13 +34,19 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        station  = (Station) bundle.getSerializable("Station");
+        station = (Station) bundle.getSerializable("Station");
 
         DownloadFile df = new DownloadFile(getActivity());
-        if(!(df.getStatus() == AsyncTask.Status.RUNNING)) {
+        if (!(df.getStatus() == AsyncTask.Status.RUNNING)) {
             df.execute(station);
             df.delegate = this;
         }
+      /*  WeatherFrag = new WeatherFragment();
+
+        Location loc = createNewLocation(station.getLatitude(), station.getLongitude());
+        ForecastIO forecastIO = new ForecastIO();
+        forecastIO.delegate = this;
+        forecastIO.execute(loc);*/
     }
 
     @Override
@@ -50,6 +57,8 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.detail_fragment, container, false);
+
+
         return view;
     }
 
@@ -85,8 +94,36 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
             InputStream inputstream = new FileInputStream(getActivity().getFilesDir() + "/stations/hourly/" + station.getFileName());
             CSVFile csv = new CSVFile(inputstream);
             station = csv.readStation(station);
+
+
+            WeatherFragment weatherFrag = new WeatherFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("Station", station);
+            weatherFrag.setArguments(bundle);
+
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            transaction.add(R.id.child_weather_fragment, weatherFrag).commit();
         } catch (IOException e) {
             Log.i("Detail Fragment: ", "File not found");
         }
     }
+
+    private Location createNewLocation(double longitude, double latitude) {
+        Location location = new Location("weatherprovider");
+        location.setLongitude(longitude);
+        location.setLatitude(latitude);
+        return location;
+    }
+/*
+    @Override
+    public void onTaskComplete(Weather weather) {
+
+        Bundle bundle = new Bundle();
+        station.setWeather(weather);
+        bundle.putSerializable("Station", station);
+        WeatherFrag.setArguments(bundle);
+
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(R.id.child_weather_fragment, WeatherFrag).commit();
+    }*/
 }

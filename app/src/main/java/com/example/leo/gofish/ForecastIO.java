@@ -29,8 +29,6 @@ public class ForecastIO extends AsyncTask<Location, Void, Weather> {
 
         String jsonStr = http.makeServiceCall(reqUrl);
 
-        //Log.i(TAG, "URL Response: " + jsonStr);
-
         if (jsonStr != null) {
             try {
                 JSONObject weatherObj = new JSONObject(jsonStr);
@@ -41,8 +39,8 @@ public class ForecastIO extends AsyncTask<Location, Void, Weather> {
                         weatherObj.getDouble("longitude"),
                         conditions.getString("summary"),
                         conditions.getString("icon"),
-                        convertToCelsius(conditions.getDouble("temperature")),
-                        convertToCelsius(conditions.getDouble("apparentTemperature")),
+                        conditions.getDouble("temperature"),
+                        conditions.getDouble("apparentTemperature"),
                         conditions.getDouble("windSpeed"),
                         conditions.getInt("windBearing"),
                         conditions.getDouble("pressure")
@@ -65,8 +63,5 @@ public class ForecastIO extends AsyncTask<Location, Void, Weather> {
 
 
 
-    private double convertToCelsius(double temp)
-    {
-        return  Math.round((5.0/9.0)*(temp - 32));
-    }
+
 }

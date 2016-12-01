@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 
 public class Weather implements Serializable {
-    private String summary ;
+    private String summary;
     private String icon;
     private double latitude;
     private double longitude;
@@ -31,7 +31,7 @@ public class Weather implements Serializable {
     }
 
     //detail weather
-    public Weather(double latitude, double longitude,String summary, String icon, double temperature, double apparentTemperature, double windSpeed, int windBearing, double pressure) {
+    public Weather(double latitude, double longitude, String summary, String icon, double temperature, double apparentTemperature, double windSpeed, int windBearing, double pressure) {
         this.setLatitude(latitude);
         this.setLongitude(longitude);
         this.setSummary(summary);
@@ -81,6 +81,10 @@ public class Weather implements Serializable {
         return temperature;
     }
 
+    public double getTempCelcius() {
+        return Math.round((5.0 / 9.0) * (getTemperature() - 32));
+    }
+
     public void setTemperature(double temperature) {
         this.temperature = temperature;
     }
@@ -89,9 +93,13 @@ public class Weather implements Serializable {
         return apparentTemperature;
     }
 
+    public double getFeelCelcius() {
+        return Math.round((5.0 / 9.0) * (getApparentTemperature() - 32));
+    }
     public void setApparentTemperature(double apparentTemperature) {
         this.apparentTemperature = apparentTemperature;
     }
+
     public double getWindSpeed() {
         return windSpeed;
     }
@@ -116,14 +124,32 @@ public class Weather implements Serializable {
         this.pressure = pressure;
     }
 
-    public String temperatureToString(){
-        return (Math.round(getApparentTemperature())+"C\u00B0");
+    public String temperatureToString() {
+        return (Math.round(getTempCelcius()) + "C\u00B0");
     }
-    public String apparentTempToString(){
-        return (Math.round(getTemperature())+"C\u00B0");
+
+    public String apparentTempToString() {
+        return (Math.round(getFeelCelcius()) + "C\u00B0");
     }
-    public String pressureToString(){
-        return String.format("%.2f",getPressure()/10)+"kPA";
+
+    public String pressureToString() {
+        return String.format("%.2f", getPressure() / 10) + "kPA";
+    }
+
+    public String windToString() {
+        return String.format("%.0f", getWindSpeed()) + "km/h " + DegreesToCardinal(getWindBearing());
+    }
+    private String DegreesToCardinal(double degrees)
+    {
+        String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+        return directions[ (int)Math.round((  ((double)degrees % 360) / 45)) % 8 ];
+    }
+
+    private String DegreesToCardinalDetailed(double degrees)
+    {
+        degrees *= 10;
+        String[] directions = { "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N" };
+        return directions[(int)Math.round(((double)degrees % 3600) / 225)];
     }
 
 }
