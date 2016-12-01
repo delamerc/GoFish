@@ -16,6 +16,7 @@ public class Station implements Serializable {
     private double discharge;
     private Weather weather;
     private String fileName;
+    private boolean isFavourite;
 
     public Station() {
         this.id = "";
@@ -26,6 +27,7 @@ public class Station implements Serializable {
         this.waterLevel = 0;
         this.discharge = 0;
         this.weather = new Weather();
+        this.isFavourite = false;
     }
 
     public Station(String id, String name, double latitude, double longitude, String province) {
@@ -37,6 +39,7 @@ public class Station implements Serializable {
         this.waterLevel = 0;
         this.discharge = 0;
         this.weather = new Weather();
+        this.isFavourite = false;
     }
 
     public String getId() {
@@ -106,6 +109,14 @@ public class Station implements Serializable {
     public Weather getWeather() { return weather;  }
 
     public void setWeather(Weather weather) { this.weather = weather; }
+
+    public boolean isFavourite() {
+        return isFavourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        isFavourite = favourite;
+    }
 
     @Override
     public String toString() {

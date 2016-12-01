@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,14 +46,14 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            Log.i("Main Activity","on Back Pressed");
-         /*
-            Fragment fr = new MainFragment();
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fragment_container, fr);
-            ft.commit();*/
-            super.onBackPressed();
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if(!(currentFragment instanceof  MainFragment)) {
+                Fragment fr = new MainFragment();
+                ft.replace(R.id.fragment_container, fr);
+                ft.commit();
+            }
         }
     }
 
@@ -65,10 +66,6 @@ public class MainActivity extends AppCompatActivity
         Fragment fr;
 
         if (id == R.id.nav_home) {
-            fr = new MainFragment();
-        } else if (id == R.id.nav_favourites) {
-            fr = new MainFragment();
-        } else if (id == R.id.nav_topstations) {
             fr = new MainFragment();
         } else {
             fr = new MainFragment();

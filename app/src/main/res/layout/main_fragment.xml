@@ -13,7 +13,6 @@
     tools:context="com.example.leo.gofish.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"

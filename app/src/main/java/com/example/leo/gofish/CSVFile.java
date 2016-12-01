@@ -20,8 +20,8 @@ public class CSVFile {
         this.inputStream = inputstream;
     }
 
-    public List read() {
-        List<Station> result = new ArrayList();
+    public ArrayList<Station> read() {
+        ArrayList<Station> result = new ArrayList();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try {
             String line;

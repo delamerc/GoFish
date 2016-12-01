@@ -3,6 +3,7 @@ package com.example.leo.gofish;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -41,12 +42,6 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
             df.execute(station);
             df.delegate = this;
         }
-      /*  WeatherFrag = new WeatherFragment();
-
-        Location loc = createNewLocation(station.getLatitude(), station.getLongitude());
-        ForecastIO forecastIO = new ForecastIO();
-        forecastIO.delegate = this;
-        forecastIO.execute(loc);*/
     }
 
     @Override
@@ -57,35 +52,24 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.detail_fragment, container, false);
-
-
         return view;
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initView();
+    }
+
+    @Override
     public void onTaskComplete(Station s) {
-        //station.setFileName(s.getFileName());
         init();
-
-        mStationId = (TextView) getView().findViewById(R.id.station_id);
         mStationId.setText("Station Id: " + station.getId());
-
-        mStationName = (TextView) getView().findViewById(R.id.station_name);
         mStationName.setText("Station Name: " + station.getName());
-
-        mStationProvince = (TextView) getView().findViewById(R.id.station_province);
         mStationProvince.setText("Province: " + station.getProvince());
-
-        mStationLat = (TextView) getView().findViewById(R.id.station_lat);
         mStationLat.setText("Latitude: " + Double.toString(station.getLatitude()));
-
-        mStationLong = (TextView) getView().findViewById(R.id.station_long);
         mStationLong.setText("Longitude: " + Double.toString(station.getLongitude()));
-
-        mStationgWaterLevel = (TextView) getView().findViewById(R.id.station_waterlevel);
         mStationgWaterLevel.setText("Water Level: " + Double.toString(station.getWaterLevel()));
-
-        mStationDischarge = (TextView) getView().findViewById(R.id.station_discharge);
         mStationDischarge.setText("Discharge: " + Double.toString(station.getDischarge()));
     }
 
@@ -94,7 +78,6 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
             InputStream inputstream = new FileInputStream(getActivity().getFilesDir() + "/stations/hourly/" + station.getFileName());
             CSVFile csv = new CSVFile(inputstream);
             station = csv.readStation(station);
-
 
             WeatherFragment weatherFrag = new WeatherFragment();
             Bundle bundle = new Bundle();
@@ -108,22 +91,20 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
         }
     }
 
+    public void initView() {
+        mStationId = (TextView) getView().findViewById(R.id.station_id);
+        mStationName = (TextView) getView().findViewById(R.id.station_name);
+        mStationProvince = (TextView) getView().findViewById(R.id.station_province);
+        mStationLat = (TextView) getView().findViewById(R.id.station_lat);
+        mStationLong = (TextView) getView().findViewById(R.id.station_long);
+        mStationgWaterLevel = (TextView) getView().findViewById(R.id.station_waterlevel);
+        mStationDischarge = (TextView) getView().findViewById(R.id.station_discharge);
+    }
+
     private Location createNewLocation(double longitude, double latitude) {
         Location location = new Location("weatherprovider");
         location.setLongitude(longitude);
         location.setLatitude(latitude);
         return location;
     }
-/*
-    @Override
-    public void onTaskComplete(Weather weather) {
-
-        Bundle bundle = new Bundle();
-        station.setWeather(weather);
-        bundle.putSerializable("Station", station);
-        WeatherFrag.setArguments(bundle);
-
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.child_weather_fragment, WeatherFrag).commit();
-    }*/
 }
