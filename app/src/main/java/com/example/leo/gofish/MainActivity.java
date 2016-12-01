@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity
                 ft.replace(R.id.fragment_container, fr);
                 ft.commit();
             }
+            else {
+                super.onBackPressed();
+            }
         }
     }
 
