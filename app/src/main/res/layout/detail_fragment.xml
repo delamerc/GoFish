@@ -36,13 +36,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lblId" />
+                android:text="@string/lblId"
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/station_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
         </LinearLayout>
 
         <LinearLayout
@@ -53,13 +55,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lblName" />
+                android:text="@string/lblName"
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/station_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
         </LinearLayout>
 
         <LinearLayout
@@ -70,13 +74,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lblLong" />
+                android:text="@string/lblLong"
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/station_long"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
         </LinearLayout>
 
         <LinearLayout
@@ -87,13 +93,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lblLat" />
+                android:text="@string/lblLat"
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/station_lat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
         </LinearLayout>
 
         <LinearLayout
@@ -104,13 +112,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lblProv" />
+                android:text="@string/lblProv"
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/station_province"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
         </LinearLayout>
 
         <LinearLayout
@@ -121,13 +131,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lblWat" />
+                android:text="@string/lblWat"
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/station_waterLevel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
         </LinearLayout>
 
         <LinearLayout
@@ -138,13 +150,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lblDis" />
+                android:text="@string/lblDis"
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/station_discharge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
