@@ -1,16 +1,14 @@
 package com.example.leo.gofish;
 
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.io.FileInputStream;
@@ -22,7 +20,7 @@ import java.io.InputStream;
  */
 
 public class DetailFragment extends Fragment implements AsyncDLResponse {
-    private Station station;
+    private Station mStation;
     private TextView mStationId;
     private TextView mStationName;
     private TextView mStationProvince;
@@ -30,16 +28,17 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
     private TextView mStationLat;
     private TextView mStationWaterLevel;
     private TextView mStationDischarge;
+    private CheckBox mCheckBox;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        station = (Station) bundle.getSerializable("Station");
+        mStation = (Station) bundle.getSerializable("Station");
 
         DownloadFile df = new DownloadFile(getActivity());
         if (!(df.getStatus() == AsyncTask.Status.RUNNING)) {
-            df.execute(station);
+            df.execute(mStation);
             df.delegate = this;
         }
     }
@@ -56,32 +55,66 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView();
+
+        mCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CheckBox cb = (CheckBox) view;
+                if (cb.isChecked()) {
+                    mStation.setFavourite(true);
+                    AsyncTask<Station, Object, Object> addFavouriteTask = new AsyncTask<Station, Object, Object>() {
+
+                        @Override
+                        protected Object doInBackground(Station... objects) {
+                            Station s = objects[0];
+                            addToFavourites(s);
+                            return null;
+                        }
+                    };
+
+                    addFavouriteTask.execute(mStation);
+                } else {
+                    mStation.setFavourite(false);
+                    AsyncTask<Station, Object, Object> removeFavouriteTask = new AsyncTask<Station, Object, Object>() {
+
+                        @Override
+                        protected Object doInBackground(Station... objects) {
+                            Station s = objects[0];
+                            removeFromFavourites(s);
+                            return null;
+                        }
+                    };
+                    removeFavouriteTask.execute(mStation);
+                }
+            }
+        });
     }
 
     @Override
     public void onTaskComplete(Station s) {
         init();
-        mStationId.setText(" " + station.getId());
-        mStationName.setText(" " + station.getName());
-        mStationProvince.setText(" " + station.getProvince());
-        mStationLat.setText(" " + Double.toString(station.getLatitude()));
-        mStationLong.setText(" " + Double.toString(station.getLongitude()));
-        mStationWaterLevel.setText(" " + Double.toString(station.getWaterLevel()));
-        mStationDischarge.setText(" " + Double.toString(station.getDischarge()));
+        mStationId.setText(" " + mStation.getId());
+        mStationName.setText(" " + mStation.getName());
+        mStationProvince.setText(" " + mStation.getProvince());
+        mStationLat.setText(" " + Double.toString(mStation.getLatitude()));
+        mStationLong.setText(" " + Double.toString(mStation.getLongitude()));
+        mStationWaterLevel.setText(" " + Double.toString(mStation.getWaterLevel()));
+        mStationDischarge.setText(" " + Double.toString(mStation.getDischarge()));
+        mCheckBox.setChecked(mStation.isFavourite());
     }
 
     public void init() {
         try {
-            InputStream inputstream = new FileInputStream(getActivity().getFilesDir() + "/stations/hourly/" + station.getFileName());
+            InputStream inputstream = new FileInputStream(getActivity().getFilesDir() + "/stations/hourly/" + mStation.getFileName());
             CSVFile csv = new CSVFile(inputstream);
-            station = csv.readStation(station);
+            mStation = csv.readStation(mStation);
 
             WeatherFragment weatherFrag = new WeatherFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable("Station", station);
+            bundle.putSerializable("Station", mStation);
             weatherFrag.setArguments(bundle);
 
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
@@ -99,12 +132,17 @@ public class DetailFragment extends Fragment implements AsyncDLResponse {
         mStationLong = (TextView) getView().findViewById(R.id.station_long);
         mStationWaterLevel = (TextView) getView().findViewById(R.id.station_waterLevel);
         mStationDischarge = (TextView) getView().findViewById(R.id.station_discharge);
+        mCheckBox = (CheckBox) getView().findViewById(R.id.detail_checkbox);
     }
 
-    private Location createNewLocation(double longitude, double latitude) {
-        Location location = new Location("weatherprovider");
-        location.setLongitude(longitude);
-        location.setLatitude(latitude);
-        return location;
+
+    private void addToFavourites(Station s) {
+        DatabaseConnector databaseConnector = new DatabaseConnector(getActivity());
+        databaseConnector.insertStation(s.getId(), s.getName(), s.getProvince());
+    }
+
+    private void removeFromFavourites(Station s) {
+        DatabaseConnector databaseConnector = new DatabaseConnector(getActivity());
+        databaseConnector.deleteStation(s.getId());
     }
 }
