@@ -6,22 +6,15 @@
 
 
     <TextView
-        android:id="@+id/lblTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/labelText"
-        android:text="@string/lblLocation"/>
-    <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/lblTitle"
-        android:text="Mississauga, ON"/>
+        android:textSize="@dimen/labelText"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/lblTitle">
+        android:layout_below="@+id/title">
 
         <ImageView
             android:id="@+id/icon"

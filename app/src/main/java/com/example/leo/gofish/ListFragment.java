@@ -30,7 +30,6 @@ import java.util.List;
  */
 
 public class ListFragment extends Fragment {
-    List<Station> stations = new ArrayList<Station>();
     private final String TAG = this.getClass().getName();
     ArrayList<Station> stations = new ArrayList<Station>();
     ArrayList<Station> favStations = new ArrayList<Station>();

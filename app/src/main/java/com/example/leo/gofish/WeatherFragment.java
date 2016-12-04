@@ -21,7 +21,7 @@ import java.net.URI;
 
 public class WeatherFragment extends Fragment {
 
-    TextView summary, temp, feel, wind, pressure;
+    TextView summary,title, temp, feel, wind, pressure;
     ImageView icon;
     private Station station;
     private Weather weather;
@@ -49,6 +49,7 @@ public class WeatherFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        title= (TextView) getView().findViewById(R.id.title);
         summary = (TextView) getView().findViewById(R.id.summary);
         icon = (ImageView) getView().findViewById(R.id.icon);
         temp = (TextView) getView().findViewById(R.id.temperature);
@@ -56,6 +57,7 @@ public class WeatherFragment extends Fragment {
         wind = (TextView) getView().findViewById(R.id.windSpeed);
         pressure = (TextView) getView().findViewById(R.id.pressure);
 
+        title.setText(station.getName());
         summary.setText(weather.getSummary());
         setImage(weather.getIcon());
         temp.setText(weather.temperatureToString());

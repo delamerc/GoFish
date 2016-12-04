@@ -1,6 +1,7 @@
 package com.example.leo.gofish;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by Karlo on 11/15/2016.
@@ -15,8 +16,10 @@ public class Station implements Serializable {
     private double waterLevel;
     private double discharge;
     private Weather weather;
+    private StationHistory stationHistory;
     private String fileName;
     private boolean isFavourite;
+
 
     public Station() {
         this.id = "";
@@ -28,6 +31,7 @@ public class Station implements Serializable {
         this.discharge = 0;
         this.weather = new Weather();
         this.isFavourite = false;
+        this.stationHistory = new StationHistory();
     }
 
     public Station(String id, String name, double latitude, double longitude, String province) {
@@ -39,6 +43,7 @@ public class Station implements Serializable {
         this.waterLevel = 0;
         this.discharge = 0;
         this.weather = new Weather();
+        this.stationHistory = new StationHistory();
         this.isFavourite = false;
     }
 
@@ -106,9 +111,21 @@ public class Station implements Serializable {
         this.fileName = fileName;
     }
 
-    public Weather getWeather() { return weather;  }
+    public Weather getWeather() {
+        return weather;
+    }
 
-    public void setWeather(Weather weather) { this.weather = weather; }
+    public void setWeather(Weather weather) {
+        this.weather = weather;
+    }
+
+    public StationHistory getStationHistory() {
+        return stationHistory;
+    }
+
+    public void setStationHistory(StationHistory stationHistory) {
+        this.stationHistory = stationHistory;
+    }
 
     public boolean isFavourite() {
         return isFavourite;
@@ -122,4 +139,33 @@ public class Station implements Serializable {
     public String toString() {
         return name + ", " + province;
     }
+
+    public int[] getDischargeHistory(){
+        List<Double> dh = stationHistory.getDisharges();
+
+        int x[] = new int[dh.size()];
+        for(int i = 0; i < x.length; i++){
+            x[i] = (int)Math.round(dh.get(i));
+        }
+        return x;
+    }
+    public int[] getWaterLevelHistory(){
+        List<Double> wlh = stationHistory.getWaterLevels();
+
+        int x[] = new int[wlh.size()];
+        for(int i = 0; i < x.length; i++){
+            x[i] = (int)Math.round(wlh.get(i));
+        }
+        return x;
+    }
+    public String[] getDatesHistory(){
+        List<String> wlh = stationHistory.getDates();
+
+        String x[] = new String[wlh.size()];
+        for(int i = 0; i < x.length; i++){
+            x[i] = wlh.get(i).toString();
+        }
+        return x;
+    }
+
 }
