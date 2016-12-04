@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,16 +41,12 @@ import im.dacer.androidcharts.LineView;
  * Created by Karlo on 11/19/2016.
  */
 
-public class DetailFragment extends Fragment implements AsyncDLResponse {
+public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapReadyCallback {
     private CheckBox mCheckBox;
     private Station mStation;
-    private LineView lineView;
-    GraphView graph;
+    private LineView mLineView;
+    GraphView mGraph;
 
-public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapReadyCallback {
-    private Station station;
-    private LineView lineView;
-    GraphView graph;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,8 +77,8 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
         fragment.getMapAsync(this);
 
         View view = inflater.inflate(R.layout.detail_fragment, container, false);
-        lineView = (LineView) view.findViewById(R.id.line_view);
-        graph = (GraphView) view.findViewById(R.id.graph);
+        mLineView = (LineView) view.findViewById(R.id.line_view);
+        mGraph = (GraphView) view.findViewById(R.id.graph);
         return view;
     }
 
@@ -135,8 +132,8 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
             CSVFile csv = new CSVFile(inputstream);
             mStation = csv.readStation(mStation);
 
-            initChart(station.getStationHistory());
-            initChart2(station.getStationHistory());
+            initChart(mStation.getStationHistory());
+            initChart2(mStation.getStationHistory());
             WeatherFragment weatherFrag = new WeatherFragment();
             Bundle bundle = new Bundle();
             bundle.putSerializable("Station", mStation);
@@ -158,22 +155,17 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng latlang = new LatLng(station.getLatitude(), station.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(latlang).title(station.getName()));
+        LatLng latlang = new LatLng(mStation.getLatitude(), mStation.getLongitude());
+        mMap.addMarker(new MarkerOptions().position(latlang).title(mStation.getName()));
 
         CameraUpdate center = CameraUpdateFactory.newLatLng(latlang);
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(9);
 
         mMap.moveCamera(center);
         mMap.animateCamera(zoom);
+    }
+
     public void initView() {
-        mStationId = (TextView) getView().findViewById(R.id.station_id);
-        mStationName = (TextView) getView().findViewById(R.id.station_name);
-        mStationProvince = (TextView) getView().findViewById(R.id.station_province);
-        mStationLat = (TextView) getView().findViewById(R.id.station_lat);
-        mStationLong = (TextView) getView().findViewById(R.id.station_long);
-        mStationWaterLevel = (TextView) getView().findViewById(R.id.station_waterLevel);
-        mStationDischarge = (TextView) getView().findViewById(R.id.station_discharge);
         mCheckBox = (CheckBox) getView().findViewById(R.id.detail_checkbox);
     }
 
@@ -183,39 +175,39 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
 
     private void initChart(StationHistory sh) {
         int randomint = 9;
-        lineView.setBottomTextList(parseDates(sh.getDates()));
-        lineView.setColorArray(new int[]{Color.parseColor("#0066ff"),Color.parseColor("#F44336"),Color.parseColor("#2196F3"),Color.parseColor("#009688")});
-        lineView.setDrawDotLine(true);
-        lineView.setShowPopup(LineView.SHOW_POPUPS_NONE);
+        mLineView.setBottomTextList(parseDates(sh.getDates()));
+        mLineView.setColorArray(new int[]{Color.parseColor("#0066ff"), Color.parseColor("#F44336"), Color.parseColor("#2196F3"), Color.parseColor("#009688")});
+        mLineView.setDrawDotLine(true);
+        mLineView.setShowPopup(LineView.SHOW_POPUPS_NONE);
 
-        List<Double> watLevs =sh.getWaterLevels();
-        List<Double> discharges =sh.getDisharges();
+        List<Double> watLevs = sh.getWaterLevels();
+        List<Double> discharges = sh.getDisharges();
 
         ArrayList<Integer> dataList = new ArrayList<Integer>();
         for (int i = 0; i < sh.getWaterLevels().size(); i++) {
-            dataList.add((int)Math.round(watLevs.get(i)));
+            dataList.add((int) Math.round(watLevs.get(i)));
         }
         ArrayList<Integer> dataList2 = new ArrayList<Integer>();
         for (int i = 0; i < randomint; i++) {
-            dataList2.add((int)Math.round(discharges.get(i)));
+            dataList2.add((int) Math.round(discharges.get(i)));
         }
 
         ArrayList<ArrayList<Integer>> dataLists = new ArrayList<ArrayList<Integer>>();
         dataLists.add(dataList);
         dataLists.add(dataList2);
 
-        lineView.setDataList(dataLists);
+        mLineView.setDataList(dataLists);
     }
 
-    public void initChart2(StationHistory sh){
+    public void initChart2(StationHistory sh) {
 
         DataPoint[] discharges = new DataPoint[sh.getDisharges().size()];
         DataPoint[] watLevs = new DataPoint[sh.getWaterLevels().size()];
         ArrayList<String> dates = sh.getDates();
-        for(int i=0;i<discharges.length;i++){
+        for (int i = 0; i < discharges.length; i++) {
 
-            discharges[i] =  new DataPoint(getDate(dates.get(i)).getTime(),sh.getDisharges().get(i));
-            watLevs[i] =  new DataPoint(getDate(dates.get(i)).getTime(),sh.getWaterLevels().get(i));
+            discharges[i] = new DataPoint(getDate(dates.get(i)).getTime(), sh.getDisharges().get(i));
+            watLevs[i] = new DataPoint(getDate(dates.get(i)).getTime(), sh.getWaterLevels().get(i));
         }
 
         LineGraphSeries<DataPoint> discharge = new LineGraphSeries<>(discharges);
@@ -225,46 +217,50 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
         LineGraphSeries<DataPoint> waterLevel = new LineGraphSeries<>(watLevs);
         waterLevel.setColor(Color.BLUE);
         waterLevel.setTitle("Water Level");
+        waterLevel.setBackgroundColor(Color.BLUE);
 
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(),new SimpleDateFormat("K a")));
-        graph.getViewport().setScalable(true);
-        graph.getViewport().setScrollable(true);
+        mGraph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(), new SimpleDateFormat("hh a")));
+        mGraph.getViewport().setScalable(true);
+        mGraph.getViewport().setScrollable(true);
+        mGraph.getGridLabelRenderer().setGridColor(Color.WHITE);
+        mGraph.getGridLabelRenderer().setHorizontalLabelsColor(Color.WHITE);
+        mGraph.getGridLabelRenderer().setVerticalLabelsColor(Color.WHITE);
+        mGraph.getGridLabelRenderer().setHumanRounding(false);
 
-        graph.getGridLabelRenderer().setHumanRounding(false);
-
-        graph.addSeries(discharge);
-        graph.addSeries(waterLevel);
+        mGraph.addSeries(discharge);
+        mGraph.addSeries(waterLevel);
 
 
     }
-    private Date getDate(String date){
+
+    private Date getDate(String date) {
 
         StringBuilder sb = new StringBuilder(date);
         int length = (date.lastIndexOf("-"));
-        date = sb.replace(length,date.length()-1,"").toString();
+        date = sb.replace(length, date.length() - 1, "").toString();
 
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        try{
+        try {
             Date d = sdf.parse(date);
             return d;
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.i("error", e.getLocalizedMessage().toString());
             return null;
 
         }
     }
-private ArrayList<String>parseDates(ArrayList<String> dates){
-    ArrayList<String> results = new ArrayList<>();
-    try{
-        for(int i=0;i<dates.size();i++){
-            results.add(dates.get(i).substring(4,10));
-        }
-        return results;
-    }catch(Exception e){
-        return null;
-    }
-}
 
+    private ArrayList<String> parseDates(ArrayList<String> dates) {
+        ArrayList<String> results = new ArrayList<>();
+        try {
+            for (int i = 0; i < dates.size(); i++) {
+                results.add(dates.get(i).substring(4, 10));
+            }
+            return results;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     private void addToFavourites(Station s) {
         DatabaseConnector databaseConnector = new DatabaseConnector(getActivity());
