@@ -3,14 +3,13 @@ package com.example.leo.gofish;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -41,6 +40,12 @@ import im.dacer.androidcharts.LineView;
  * Created by Karlo on 11/19/2016.
  */
 
+public class DetailFragment extends Fragment implements AsyncDLResponse {
+    private CheckBox mCheckBox;
+    private Station mStation;
+    private LineView lineView;
+    GraphView graph;
+
 public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapReadyCallback {
     private Station station;
     private LineView lineView;
@@ -49,12 +54,11 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        station = (Station) bundle.getSerializable("Station");
-
+        mStation = (Station) bundle.getSerializable("Station");
 
         DownloadFile df = new DownloadFile(getActivity());
         if (!(df.getStatus() == AsyncTask.Status.RUNNING)) {
-            df.execute(station);
+            df.execute(mStation);
             df.delegate = this;
         }
     }
@@ -82,8 +86,42 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initView();
+
+        mCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CheckBox cb = (CheckBox) view;
+                if (cb.isChecked()) {
+                    mStation.setFavourite(true);
+                    AsyncTask<Station, Object, Object> addFavouriteTask = new AsyncTask<Station, Object, Object>() {
+
+                        @Override
+                        protected Object doInBackground(Station... objects) {
+                            Station s = objects[0];
+                            addToFavourites(s);
+                            return null;
+                        }
+                    };
+
+                    addFavouriteTask.execute(mStation);
+                } else {
+                    mStation.setFavourite(false);
+                    AsyncTask<Station, Object, Object> removeFavouriteTask = new AsyncTask<Station, Object, Object>() {
+
+                        @Override
+                        protected Object doInBackground(Station... objects) {
+                            Station s = objects[0];
+                            removeFromFavourites(s);
+                            return null;
+                        }
+                    };
+                    removeFavouriteTask.execute(mStation);
+                }
+            }
+        });
     }
 
     @Override
@@ -93,15 +131,15 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
 
     public void init() {
         try {
-            InputStream inputstream = new FileInputStream(getActivity().getFilesDir() + "/stations/hourly/" + station.getFileName());
+            InputStream inputstream = new FileInputStream(getActivity().getFilesDir() + "/stations/hourly/" + mStation.getFileName());
             CSVFile csv = new CSVFile(inputstream);
-            station = csv.readStation(station);
+            mStation = csv.readStation(mStation);
 
             initChart(station.getStationHistory());
             initChart2(station.getStationHistory());
             WeatherFragment weatherFrag = new WeatherFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable("Station", station);
+            bundle.putSerializable("Station", mStation);
             weatherFrag.setArguments(bundle);
 
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
@@ -128,6 +166,15 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
 
         mMap.moveCamera(center);
         mMap.animateCamera(zoom);
+    public void initView() {
+        mStationId = (TextView) getView().findViewById(R.id.station_id);
+        mStationName = (TextView) getView().findViewById(R.id.station_name);
+        mStationProvince = (TextView) getView().findViewById(R.id.station_province);
+        mStationLat = (TextView) getView().findViewById(R.id.station_lat);
+        mStationLong = (TextView) getView().findViewById(R.id.station_long);
+        mStationWaterLevel = (TextView) getView().findViewById(R.id.station_waterLevel);
+        mStationDischarge = (TextView) getView().findViewById(R.id.station_discharge);
+        mCheckBox = (CheckBox) getView().findViewById(R.id.detail_checkbox);
     }
 
     //=============================================================================//
@@ -218,4 +265,14 @@ private ArrayList<String>parseDates(ArrayList<String> dates){
     }
 }
 
+
+    private void addToFavourites(Station s) {
+        DatabaseConnector databaseConnector = new DatabaseConnector(getActivity());
+        databaseConnector.insertStation(s.getId(), s.getName(), s.getProvince());
+    }
+
+    private void removeFromFavourites(Station s) {
+        DatabaseConnector databaseConnector = new DatabaseConnector(getActivity());
+        databaseConnector.deleteStation(s.getId());
+    }
 }

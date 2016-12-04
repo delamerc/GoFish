@@ -6,15 +6,25 @@
 
 
     <TextView
+        android:id="@+id/lblTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/labelText"
+        android:text="@string/lblLocation"
+        android:textColor="@color/white"/>
+    <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/labelText"/>
+        android:layout_toRightOf="@+id/lblTitle"
+        android:textStyle="bold"
+        android:text=" Mississauga, ON"
+        android:textColor="@color/white"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/title">
+        android:layout_below="@+id/lblTitle">
 
         <ImageView
             android:id="@+id/icon"
@@ -29,7 +39,8 @@
             android:textSize="@dimen/labelText"
             android:layout_toRightOf="@+id/temperature"
             android:layout_marginLeft="@dimen/weather_margin"
-            android:text="@string/lblFeel"/>
+            android:text="@string/lblFeel"
+            android:textColor="@color/white"/>
         <TextView
             android:id="@+id/lblWindSpeed"
             android:layout_width="wrap_content"
@@ -38,7 +49,8 @@
             android:text="@string/lblWind"
             android:layout_marginLeft="@dimen/weather_margin"
             android:layout_toRightOf="@+id/temperature"
-            android:layout_below="@id/lblFeel"/>
+            android:layout_below="@id/lblFeel"
+            android:textColor="@color/white"/>
         <TextView
             android:id="@+id/lblPressure"
             android:layout_width="wrap_content"
@@ -47,39 +59,59 @@
             android:text="@string/lblPressure"
             android:layout_below="@+id/lblWindSpeed"
             android:layout_marginLeft="@dimen/weather_margin"
-            android:layout_toRightOf="@+id/temperature" />
+            android:layout_toRightOf="@+id/temperature"
+            android:textColor="@color/white"/>
 
         <TextView
             android:id="@+id/summary"
             android:layout_width="wrap_content"
             android:layout_below="@+id/icon"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
         <TextView
             android:id="@+id/apparentTemperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/lblFeel"
-            android:layout_toRightOf="@+id/lblFeel"/>
+            android:layout_toRightOf="@+id/lblFeel"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
         <TextView
             android:id="@+id/temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/icon"
-            android:textSize="@dimen/temp_text"/>
+            android:textSize="@dimen/temp_text"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:gravity="center"/>
         <TextView
             android:id="@+id/windSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/lblWindSpeed"
-            android:layout_alignBaseline="@+id/lblWindSpeed"/>
+            android:layout_alignBaseline="@+id/lblWindSpeed"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
         <TextView
             android:id="@+id/pressure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/lblPressure"
-            android:layout_alignBaseline="@+id/lblPressure"/>
+            android:layout_alignBaseline="@+id/lblPressure"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
     </RelativeLayout>
 
-
+    <CheckBox
+        android:id="@+id/detail_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/star_selector"
+        android:button="@null"/>
 
 </RelativeLayout>

@@ -4,12 +4,14 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,17 +23,17 @@ import java.net.URI;
 
 public class WeatherFragment extends Fragment {
 
-    TextView summary,title, temp, feel, wind, pressure;
-    ImageView icon;
-    private Station station;
-    private Weather weather;
+    private TextView mSummary, mTemp, mFeel, mWind, mPressure;
+    private ImageView mIcon;
+    private Station mStation;
+    private Weather mWeather;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        station = (Station) bundle.getSerializable("Station");
-        weather = station.getWeather();
+        mStation = (Station) bundle.getSerializable("Station");
+        mWeather = mStation.getWeather();
 
     }
 
@@ -48,22 +50,17 @@ public class WeatherFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initViews();
+        setInformation();
+    }
 
-        title= (TextView) getView().findViewById(R.id.title);
-        summary = (TextView) getView().findViewById(R.id.summary);
-        icon = (ImageView) getView().findViewById(R.id.icon);
-        temp = (TextView) getView().findViewById(R.id.temperature);
-        feel = (TextView) getView().findViewById(R.id.apparentTemperature);
-        wind = (TextView) getView().findViewById(R.id.windSpeed);
-        pressure = (TextView) getView().findViewById(R.id.pressure);
-
-        title.setText(station.getName());
-        summary.setText(weather.getSummary());
-        setImage(weather.getIcon());
-        temp.setText(weather.temperatureToString());
-        feel.setText(weather.apparentTempToString());
-        wind.setText(weather.windToString());
-        pressure.setText(weather.pressureToString());
+    private void setInformation() {
+        mSummary.setText(mWeather.getSummary());
+        setImage(mWeather.getIcon());
+        mTemp.setText(mWeather.temperatureToString());
+        mFeel.setText(" " + mWeather.apparentTempToString());
+        mWind.setText(" " + mWeather.windToString());
+        mPressure.setText(" " + mWeather.pressureToString());
     }
 
     private void setImage(String img) {
@@ -71,6 +68,15 @@ public class WeatherFragment extends Fragment {
         String mDrawableName = img.replaceAll("-","");
         int resID = res.getIdentifier(mDrawableName, "mipmap", getActivity().getPackageName());
         Drawable drawable = res.getDrawable(resID);
-        icon.setImageDrawable(drawable);
+        mIcon.setImageDrawable(drawable);
+    }
+
+    private void initViews() {
+        mSummary = (TextView) getView().findViewById(R.id.summary);
+        mIcon = (ImageView) getView().findViewById(R.id.icon);
+        mTemp = (TextView) getView().findViewById(R.id.temperature);
+        mFeel = (TextView) getView().findViewById(R.id.apparentTemperature);
+        mWind = (TextView) getView().findViewById(R.id.windSpeed);
+        mPressure = (TextView) getView().findViewById(R.id.pressure);
     }
 }

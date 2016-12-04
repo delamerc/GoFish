@@ -1,29 +1,23 @@
 package com.example.leo.gofish;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Karlo on 11/15/2016.
@@ -31,8 +25,7 @@ import java.util.List;
 
 public class ListFragment extends Fragment {
     private final String TAG = this.getClass().getName();
-    ArrayList<Station> stations = new ArrayList<Station>();
-    ArrayList<Station> favStations = new ArrayList<Station>();
+    ArrayList<Station> mStationList = new ArrayList<Station>();
     CustomAdapter adapter = null;
 
     @Override
@@ -46,7 +39,7 @@ public class ListFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init();
         displayDefaultStation();
@@ -63,16 +56,11 @@ public class ListFragment extends Fragment {
             this.stationList.addAll(stations);
         }
 
-        public void setList(ArrayList<Station> favs) {
-            this.stationList = favs;
-        }
-
         private class ViewHolder {
             TextView name;
             CheckBox isFavourite;
         }
 
-        @NonNull
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
@@ -91,13 +79,30 @@ public class ListFragment extends Fragment {
                         Station station = (Station) cb.getTag();
                         if(cb.isChecked()) {
                             station.setFavourite(true);
-                            addToFavourites(station);
-                            favStations.add(station);
+                            AsyncTask<Station, Object, Object> addFavouriteTask = new AsyncTask<Station, Object, Object>() {
+
+                                @Override
+                                protected Object doInBackground(Station... objects) {
+                                    Station s = objects[0];
+                                    addToFavourites(s);
+                                    return null;
+                                }
+                            };
+
+                            addFavouriteTask.execute(station);
                         }
                         else {
                             station.setFavourite(false);
-                            removeFromFavourites(station);
-                            favStations.remove(station);
+                            AsyncTask<Station, Object, Object> removeFavouriteTask = new AsyncTask<Station, Object, Object>() {
+
+                                @Override
+                                protected Object doInBackground(Station... objects) {
+                                    Station s = objects[0];
+                                    removeFromFavourites(s);
+                                    return null;
+                                }
+                            };
+                            removeFavouriteTask.execute(station);
                         }
                     }
                 });
@@ -116,14 +121,13 @@ public class ListFragment extends Fragment {
     public void init() {
         InputStream inputstream = getResources().openRawResource(R.raw.stations);
         CSVFile csv = new CSVFile(inputstream);
-        stations = csv.read();
+        mStationList = csv.read();
 
         DatabaseConnector databaseConnector = new DatabaseConnector(getActivity());
         databaseConnector.open();
-        for(Station s : stations) {
+        for(Station s : mStationList) {
             Log.i("INFO", s.getId() + " station exists:" + databaseConnector.checkIfExists(s.getId()));
             if(databaseConnector.checkIfExists(s.getId())) {
-                favStations.add(s);
                 s.setFavourite(true);
             }
         }
@@ -131,7 +135,7 @@ public class ListFragment extends Fragment {
     }
 
     private void displayDefaultStation() {
-        adapter = new CustomAdapter(getActivity(), R.layout.list_fragment, stations);
+        adapter = new CustomAdapter(getActivity(), R.layout.list_fragment, mStationList);
         ListView listView = (ListView) getActivity().findViewById(R.id.station_list);
         listView.setAdapter(adapter);
 

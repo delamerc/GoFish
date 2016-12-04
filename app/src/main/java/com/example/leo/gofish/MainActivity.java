@@ -10,11 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -59,6 +55,9 @@ public class MainActivity extends AppCompatActivity
                 ft.replace(R.id.fragment_container, fr);
                 ft.commit();
             }
+            else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             fr = new MainFragment();
         } else {
-            fr = new MainFragment();
+            fr = new FavouriteListFragment();
         }
 
         FragmentManager fm = getSupportFragmentManager();

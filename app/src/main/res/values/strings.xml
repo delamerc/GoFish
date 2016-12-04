@@ -4,12 +4,14 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- drawer items -->
     <string name="menu_home">Home</string>
     <string name="menu_fav">Favourites</string>
-    <string name="menu_top">Top Stations</string>
+
+    <!-- favourite header -->
+    <string name="favHeader">FAVOURITE STATIONS</string>
 
     <!--weather fragment -->
-    <string name="lbltemp">Temperature:</string>
     <string name="lblFeel">Feels like:</string>
     <string name="lblPressure">Pressure:</string>
     <string name="lblWind">Wind:</string>
@@ -26,7 +28,15 @@
         <item name="NW">NW</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--detail fragment -->
+    <string name="lblId">Station Id: </string>
+    <string name="lblName">Station Name: </string>
+    <string name="lblLong">Longitude: </string>
+    <string name="lblLat">Latitude: </string>
+    <string name="lblProv">Province: </string>
+    <string name="lblWat">Water Level: </string>
+    <string name="lblDis">Discharge: </string>
+
+
 
 </resources>
