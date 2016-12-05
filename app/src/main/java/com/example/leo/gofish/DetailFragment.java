@@ -1,6 +1,8 @@
 package com.example.leo.gofish;
 
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -20,22 +23,20 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+
+import org.achartengine.ChartFactory;
+import org.achartengine.chart.PointStyle;
+import org.achartengine.model.XYMultipleSeriesDataset;
+import org.achartengine.model.XYSeries;
+import org.achartengine.renderer.BasicStroke;
+import org.achartengine.renderer.XYMultipleSeriesRenderer;
+import org.achartengine.renderer.XYSeriesRenderer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-
-import im.dacer.androidcharts.LineView;
 
 /**
  * Created by Karlo on 11/19/2016.
@@ -44,8 +45,8 @@ import im.dacer.androidcharts.LineView;
 public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapReadyCallback {
     private CheckBox mCheckBox;
     private Station mStation;
-    private LineView mLineView;
-    GraphView mGraph;
+    private TextView mWaterLevel, mDischarge;
+    private View mChart;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,8 +78,6 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
         fragment.getMapAsync(this);
 
         View view = inflater.inflate(R.layout.detail_fragment, container, false);
-        mLineView = (LineView) view.findViewById(R.id.line_view);
-        mGraph = (GraphView) view.findViewById(R.id.graph);
         return view;
     }
 
@@ -125,15 +124,23 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
     public void onTaskComplete(Station s) {
         init();
     }
-
+    //=============================================================================//
+    //---------------------------------View inits-----------------------------------------//
+    //=============================================================================//
+    public void initView() {
+        mCheckBox = (CheckBox) getView().findViewById(R.id.detail_checkbox);
+        mWaterLevel = (TextView)getView().findViewById(R.id.current_waterlevel);
+        mDischarge= (TextView)getView().findViewById(R.id.current_discharge);
+    }
     public void init() {
         try {
             InputStream inputstream = new FileInputStream(getActivity().getFilesDir() + "/stations/hourly/" + mStation.getFileName());
             CSVFile csv = new CSVFile(inputstream);
             mStation = csv.readStation(mStation);
-
+            mWaterLevel.setText(String.valueOf(mStation.getWaterLevel())+ " cm/s");
+            mDischarge.setText(String.valueOf(mStation.getDischarge())+ " cm/s" );
             initChart(mStation.getStationHistory());
-            initChart2(mStation.getStationHistory());
+
             WeatherFragment weatherFrag = new WeatherFragment();
             Bundle bundle = new Bundle();
             bundle.putSerializable("Station", mStation);
@@ -165,102 +172,9 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
         mMap.animateCamera(zoom);
     }
 
-    public void initView() {
-        mCheckBox = (CheckBox) getView().findViewById(R.id.detail_checkbox);
-    }
-
     //=============================================================================//
-    //---------------------------------Chart 2-----------------------------------------//
+    //---------------------------------Favorites -----------------------------------------//
     //=============================================================================//
-
-    private void initChart(StationHistory sh) {
-        int randomint = 9;
-        mLineView.setBottomTextList(parseDates(sh.getDates()));
-        mLineView.setColorArray(new int[]{Color.parseColor("#0066ff"), Color.parseColor("#F44336"), Color.parseColor("#2196F3"), Color.parseColor("#009688")});
-        mLineView.setDrawDotLine(true);
-        mLineView.setShowPopup(LineView.SHOW_POPUPS_NONE);
-
-        List<Double> watLevs = sh.getWaterLevels();
-        List<Double> discharges = sh.getDisharges();
-
-        ArrayList<Integer> dataList = new ArrayList<Integer>();
-        for (int i = 0; i < sh.getWaterLevels().size(); i++) {
-            dataList.add((int) Math.round(watLevs.get(i)));
-        }
-        ArrayList<Integer> dataList2 = new ArrayList<Integer>();
-        for (int i = 0; i < randomint; i++) {
-            dataList2.add((int) Math.round(discharges.get(i)));
-        }
-
-        ArrayList<ArrayList<Integer>> dataLists = new ArrayList<ArrayList<Integer>>();
-        dataLists.add(dataList);
-        dataLists.add(dataList2);
-
-        mLineView.setDataList(dataLists);
-    }
-
-    public void initChart2(StationHistory sh) {
-
-        DataPoint[] discharges = new DataPoint[sh.getDisharges().size()];
-        DataPoint[] watLevs = new DataPoint[sh.getWaterLevels().size()];
-        ArrayList<String> dates = sh.getDates();
-        for (int i = 0; i < discharges.length; i++) {
-
-            discharges[i] = new DataPoint(getDate(dates.get(i)).getTime(), sh.getDisharges().get(i));
-            watLevs[i] = new DataPoint(getDate(dates.get(i)).getTime(), sh.getWaterLevels().get(i));
-        }
-
-        LineGraphSeries<DataPoint> discharge = new LineGraphSeries<>(discharges);
-        discharge.setColor(Color.RED);
-        discharge.setTitle("Discharge");
-
-        LineGraphSeries<DataPoint> waterLevel = new LineGraphSeries<>(watLevs);
-        waterLevel.setColor(Color.BLUE);
-        waterLevel.setTitle("Water Level");
-        waterLevel.setBackgroundColor(Color.BLUE);
-
-        mGraph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(), new SimpleDateFormat("hh a")));
-        mGraph.getViewport().setScalable(true);
-        mGraph.getViewport().setScrollable(true);
-        mGraph.getGridLabelRenderer().setGridColor(Color.WHITE);
-        mGraph.getGridLabelRenderer().setHorizontalLabelsColor(Color.WHITE);
-        mGraph.getGridLabelRenderer().setVerticalLabelsColor(Color.WHITE);
-        mGraph.getGridLabelRenderer().setHumanRounding(false);
-
-        mGraph.addSeries(discharge);
-        mGraph.addSeries(waterLevel);
-
-
-    }
-
-    private Date getDate(String date) {
-
-        StringBuilder sb = new StringBuilder(date);
-        int length = (date.lastIndexOf("-"));
-        date = sb.replace(length, date.length() - 1, "").toString();
-
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        try {
-            Date d = sdf.parse(date);
-            return d;
-        } catch (Exception e) {
-            Log.i("error", e.getLocalizedMessage().toString());
-            return null;
-
-        }
-    }
-
-    private ArrayList<String> parseDates(ArrayList<String> dates) {
-        ArrayList<String> results = new ArrayList<>();
-        try {
-            for (int i = 0; i < dates.size(); i++) {
-                results.add(dates.get(i).substring(4, 10));
-            }
-            return results;
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     private void addToFavourites(Station s) {
         DatabaseConnector databaseConnector = new DatabaseConnector(getActivity());
@@ -271,4 +185,104 @@ public class DetailFragment extends Fragment implements AsyncDLResponse, OnMapRe
         DatabaseConnector databaseConnector = new DatabaseConnector(getActivity());
         databaseConnector.deleteStation(s.getId());
     }
+
+    //=============================================================================//
+    //---------------------------------Chart -----------------------------------------//
+    //=============================================================================//
+
+
+    private void initChart(StationHistory sh) {
+        List<Double> dc = sh.getDisharges();
+        List<Double> wl = sh.getWaterLevels();
+        ArrayList<String> dates = sh.getDates();
+
+        XYSeries discharge = new XYSeries("Discharge");
+        XYSeries waterLevel = new XYSeries("Water Level");
+
+        for (int i = 0; i < dc.size(); i++) {
+            discharge.add(i, dc.get(i));
+            waterLevel.add(i, wl.get(i));
+        }
+
+        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+
+        dataset.addSeries(discharge);
+        dataset.addSeries(waterLevel);
+
+        XYSeriesRenderer dischargeRenderer = new XYSeriesRenderer();
+        dischargeRenderer.setShowLegendItem(true);
+        dischargeRenderer.setColor(Color.RED);
+        dischargeRenderer.setFillPoints(true);
+        dischargeRenderer.setLineWidth(2f);
+        dischargeRenderer.setDisplayChartValues(true);
+        dischargeRenderer.setChartValuesTextSize(15);
+        dischargeRenderer.setDisplayChartValuesDistance(10);
+        dischargeRenderer.setPointStyle(PointStyle.CIRCLE);
+        dischargeRenderer.setStroke(BasicStroke.SOLID);
+
+        XYSeriesRenderer watlevRenderer = new XYSeriesRenderer();
+        watlevRenderer.setShowLegendItem(true);
+        watlevRenderer.setColor(Color.BLUE);
+        watlevRenderer.setFillPoints(true);
+        watlevRenderer.setLineWidth(2f);
+        watlevRenderer.setDisplayChartValues(true);
+        watlevRenderer.setChartValuesTextSize(15);
+        watlevRenderer.setPointStyle(PointStyle.SQUARE);
+        watlevRenderer.setStroke(BasicStroke.SOLID);
+
+        XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
+        multiRenderer.setXLabels(10);
+        multiRenderer.setChartTitle("Water Condition Data");
+        multiRenderer.setYTitle("cm/s");
+        multiRenderer.setChartTitleTextSize(20);
+        multiRenderer.setAxisTitleTextSize(15);
+        multiRenderer.setLegendTextSize(20);
+        multiRenderer.setLabelsTextSize(15);
+
+        multiRenderer.setZoomButtonsVisible(false);
+        multiRenderer.setPanEnabled(true, false);
+
+        multiRenderer.setClickEnabled(false);
+        multiRenderer.setZoomEnabled(true, false);
+        multiRenderer.setShowGridY(true);
+        multiRenderer.setShowGridX(true);
+        multiRenderer.setFitLegend(true);
+        multiRenderer.setShowGrid(true);
+        multiRenderer.setExternalZoomEnabled(false);
+        multiRenderer.setAntialiasing(true);
+        multiRenderer.setInScroll(false);
+
+        multiRenderer.setLegendHeight(100);
+        multiRenderer.setXLabelsAlign(Paint.Align.CENTER);
+        multiRenderer.setXLabelsPadding(10);
+        multiRenderer.setXLabelsAngle(45);
+        multiRenderer.setBarSpacing(2);
+
+        multiRenderer.setYLabelsAlign(Paint.Align.LEFT);
+        multiRenderer.setTextTypeface("sans_serif", Typeface.NORMAL);
+        multiRenderer.setYLabels(10);
+
+        multiRenderer.setXAxisMin(-0.5);
+        multiRenderer.setXAxisMax(10);
+
+        multiRenderer.setApplyBackgroundColor(false);
+        multiRenderer.setScale(4f);
+        multiRenderer.setPointSize(2f);
+
+        for (int i = 0; i < dates.size(); i++) {
+            multiRenderer.addXTextLabel(i, dates.get(i).substring(5, 10) + dates.get(i).substring(13, 16));
+        }
+
+        multiRenderer.addSeriesRenderer(dischargeRenderer);
+        multiRenderer.addSeriesRenderer(watlevRenderer);
+
+        LinearLayout chartContainer = (LinearLayout) getActivity().findViewById(R.id.chart);
+        chartContainer.removeAllViews();
+
+        mChart = ChartFactory.getLineChartView(getActivity(), dataset, multiRenderer);
+
+        chartContainer.addView(mChart);
+    }
 }
+
+

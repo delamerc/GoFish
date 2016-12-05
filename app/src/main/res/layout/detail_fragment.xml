@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -20,11 +21,11 @@
         android:id="@+id/detail_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
         android:background="@drawable/star_selector"
-        android:button="@null"/>
+        android:button="@null"
+        android:gravity="right" />
 
     <View
         android:id="@+id/line"
@@ -38,54 +39,70 @@
         android:layout_width="match_parent"
         android:layout_height="500dp"
         android:layout_below="@+id/child_weather_fragment"
-        android:scrollbars="horizontal"
-        >
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/activity_vertical_margin">
+        android:scrollbars="horizontal">
+
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:text="Discharge "
-                android:textColor="@color/ap_white"
-                android:drawableLeft="@mipmap/box_red"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:text="Water Level "
-                android:textColor="@color/ap_white"
-                android:drawableLeft="@mipmap/box_blue"/>
-        </LinearLayout>
-        <com.jjoe64.graphview.GraphView
-            android:layout_width="match_parent"
-            android:layout_height="200dip"
-            android:id="@+id/graph"/>
-
-        <HorizontalScrollView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/horizontalScrollView">
-            <view
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                class="im.dacer.androidcharts.LineView"
-                android:id="@+id/line_view"/>
-        </HorizontalScrollView>
-
-        <fragment
-            android:layout_width="fill_parent"
-            android:layout_height="300dp"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:id="@+id/detail_map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"/>
-    </LinearLayout>
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Current Discharge: "
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/current_discharge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cuurrent Water Level: "
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/current_waterlevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    tools:ignore="Orientation"
+                    android:layout_marginBottom="@dimen/activity_horizontal_margin">
+                </LinearLayout>
+
+
+
+            <fragment
+                android:id="@+id/detail_map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="fill_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin" />
+        </LinearLayout>
     </ScrollView>
 
 
