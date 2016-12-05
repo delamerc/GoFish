@@ -9,11 +9,7 @@
         <activity
             android:name=".ChartDemo"
             android:label="AChartEngine demo" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name="org.achartengine.chartdemo.demo.chart.XYChartBuilder" />
         <activity android:name="org.achartengine.chartdemo.demo.chart.PieChartBuilder" />
