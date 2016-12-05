@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -57,26 +59,30 @@ public class FavouriteListFragment extends Fragment {
     }
 
     private void displayDefaultStation() {
-        ListView listView = (ListView) getActivity().findViewById(R.id.fav_station_list);
-        ArrayAdapter favAdapter = new ArrayAdapter(getActivity(), R.layout.custom_favlist, stations);
-        listView.setAdapter(favAdapter);
+        if(stations.size() == 0) {
+            Toast.makeText(getActivity(), "You have no stations added in your favourite", Toast.LENGTH_SHORT).show();
+        } else {
+            ListView listView = (ListView) getActivity().findViewById(R.id.fav_station_list);
+            ArrayAdapter favAdapter = new ArrayAdapter(getActivity(), R.layout.custom_favlist, stations);
+            listView.setAdapter(favAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Station s = (Station) adapterView.getItemAtPosition(i);
-                Fragment frag = new DetailFragment();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("Station", s);
-                frag.setArguments(bundle);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Station s = (Station) adapterView.getItemAtPosition(i);
+                    Fragment frag = new DetailFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("Station", s);
+                    frag.setArguments(bundle);
 
-                Fragment fr = frag;
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.fragment_container, fr);
-                ft.commit();
-            }
-        });
+                    Fragment fr = frag;
+                    FragmentManager fm = getFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.replace(R.id.fragment_container, fr);
+                    ft.commit();
+                }
+            });
+        }
     }
 
 }
